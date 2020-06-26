@@ -15,28 +15,31 @@ class BlogRoll extends React.Component {
             <div className="is-parent column is-6" key={post.id}>
               <article
                 className={`blog-list-item tile is-child box notification ${
-                  post.frontmatter.status ? 'is-featured' : ''
+                  post.frontmatter.featuredpost ? 'is-featured' : ''
                 }`}
               >
                 <header>
-                  {post.frontmatter.image ? (
+                  {post.frontmatter.featuredimage ? (
                     <div className="featured-thumbnail">
                       <PreviewCompatibleImage
                         imageInfo={{
-                          image: post.frontmatter.image,
-                          alt: `featured image thumbnail for post ${post.frontmatter.name}`,
+                          image: post.frontmatter.featuredimage,
+                          alt: `featured image thumbnail for post ${post.frontmatter.title}`,
                         }}
                       />
                     </div>
                   ) : null}
                   <p className="post-meta">
                     <Link
-                      className="name has-text-primary is-size-4"
+                      className="title has-text-primary is-size-4"
                       to={post.fields.slug}
                     >
-                      {post.frontmatter.name}
+                      {post.frontmatter.title}
                     </Link>
                     <span> &bull; </span>
+                    <span className="subtitle is-size-5 is-block">
+                      {post.frontmatter.date}
+                    </span>
                   </p>
                 </header>
                 <p>
@@ -69,7 +72,7 @@ export default () => (
       query BlogRollQuery {
         allMarkdownRemark(
           sort: { order: DESC, fields: [frontmatter___date] }
-          filter: { frontmatter: { templateKey: { eq: "product-post" } } }
+          filter: { frontmatter: { templateKey: { eq: "blog-post" } } }
         ) {
           edges {
             node {
@@ -79,10 +82,11 @@ export default () => (
                 slug
               }
               frontmatter {
-                name
+                title
                 templateKey
-                status
-                image {
+                date(formatString: "MMMM DD, YYYY")
+                featuredpost
+                featuredimage {
                   childImageSharp {
                     fluid(maxWidth: 120, quality: 100) {
                       ...GatsbyImageSharpFluid
